@@ -1,6 +1,6 @@
 # react-data-markup [![Build Status](https://travis-ci.org/dferens/react-data-markup.svg?branch=master)](https://travis-ci.org/dferens/react-data-markup)
 
-Data syntax for React.js markup, inspired by [react-hyperscript](https://github.com/mlmorg/react-hyperscript).
+Write React.js markup with arrays & objects, inspired by [react-hyperscript](https://github.com/mlmorg/react-hyperscript) and [rum](https://github.com/tonsky/rum).
 
 ## Importing
 
@@ -16,69 +16,65 @@ If you prefer a <script> tag, you can get it from window.DataMarkup global:
 <script src="https://unpkg.com/react-data-markup/react-data-markup.js"></script>
 ```
 
+## Form syntax
+
+```
+[<tag-n-function>, <props>?, <children>*, ...]
+```
+- **\<tag-n-function\>** `String|Object` - function, component, or string in a format 'tag#id.class'
+- **\<props\>** `Object` *(optional)* - An object containing the props you'd like to set on the element
+- **\<children\>** `Array` - Zero or more forms or a strings. This will create child elements or a text node, respectively.
+
 ## Usage
 
-```html
-<script type="text/javascript">
-    var DataMarkup = window.DataMarkup;    
+```javascript
+var DataMarkup = window.DataMarkup;    
 
-    // Use `DataMarkup.wrapFunction` get wrap functional component
-    var FunctionalComponent = DataMarkup.wrapFunction(function(props) {
-      return (
-        ['p', props.foo]
-      )
-    });
+// Use `DataMarkup.wrapFunction` for functional components
+var FunctionalComponent = DataMarkup.wrapFunction(function(props) {
+  return (
+    ['p', props.x * 2]
+  )
+});
 
-    // Use `DataMarkup.createClass` to get `render` automatically wrapped
-    var AnotherComponent = DataMarkup.createClass({
-      render: function() {
-        return ['p', 'Hello world!', this.props.children]            
-      }
-    });
+// Use `DataMarkup.createClass` to get `render` automatically wrapped
+var AnotherComponent = DataMarkup.createClass({
+  render: function() {
+    return ['p', 'Hello world!', this.props.children]            
+  }
+});
 
-    var MainComponent = DataMarkup.createClass({
-      // Will render to:      
-      //   <div class="example">
-      //     <h1 id="heading">This are lists</h1>
-      //     <h2>creating React.js markup</h2>
-      //     <p>bar</p>
-      //     <p>
-      //       Hello world!
-      //       <li href="http://whatever.com">One list item</li>
-      //       <li>Another list item</li>
-      //     </p>
-      //   </div>
-      render: function render() {
-        return (
-            ['div.example',  // or simply '.example'
-                ['h1#heading', 'This are lists'],
-                ['h2', 'creating React.js markup'],
-                [FunctionalComponent, {foo: 'bar'}],
-                [AnotherComponent, {foo: 'bar'},
-                    ['li', {href: 'http://whatever.com'}, 'One list item'],
-                    ['li', 'Another list item']
-                ]    
-            ]
-        );                    
-      }
-    });    
-</script>
+var MainComponent = DataMarkup.createClass({
+  render: function render() {
+    return (
+        ['.example',
+            ['h1#heading', 'These are arrays'],
+            ['h2', 'creating React.js markup'],
+            [FunctionalComponent, {x: 5}],
+            [AnotherComponent, {foo: 'bar'},
+                ['li', {href: 'http://whatever.com'}, 'One list item'],
+                ['li', 'Another list item']
+            ]    
+        ]
+    );                    
+  }
+});    
 ```
 
 ## API
 
-#### DataMarkup
+#### `DataMarkup.createClass(classSpec)`
 
+Creates React component, which transforms markup returned by `render` into React's elements.
 
-#### `h(componentOrTag, properties, children)`
+#### `DataMarkup.wrapFunction(fn)`
 
-Returns a React element.
+Returns function, which calls `fn` and transforms it's result.
 
-- **componentOrTag** `Object|String` - Can be a React component **OR** tag
-string with optional css class names/id in the format `h1#some-id.foo.bar`.
-If a tag string, it will parse out the tag name and change the `id` and
-`className` properties of the `properties` object.
-- **properties** `Object` *(optional)* - An object containing the properties
-you'd like to set on the element.
-- **children** `Array|String` *(optional)* - An array of `h()` children or
-a string. This will create child elements or a text node, respectively.
+- **fn** `Function`
+
+#### `DataMarkup.transform(form)`
+
+Parses array markup and returns React elements.
+
+- **form** `Array`

@@ -10,7 +10,7 @@
     React = window.React;
   }
 
-  function parseTag(tag, props) {
+  function _parseTag(tag, props) {
     var noId = !('id' in props),
       tagParts = tag.split(/([\.#]?[a-zA-Z0-9_:-]+)/),
       tagName = null,
@@ -51,24 +51,28 @@
     };
   }
 
-  function isElementForm(x) {
+  function _isElementForm(x) {
     return Array.isArray(x) && (typeof x[0] == 'string' || typeof x[0] ==
       'function')
   }
 
-  function isObject(val) {
+  // Code is taken from: https://github.com/jonschlinkert/is-plain-object
+
+  // BEGIN
+
+  function _isObject(val) {
     return val != null && typeof val === 'object' && Array.isArray(val) === false;
   }
 
-  function isObjectObject(o) {
-    return isObject(o) === true && Object.prototype.toString.call(o) ===
+  function _isObjectObject(o) {
+    return _isObject(o) === true && Object.prototype.toString.call(o) ===
       '[object Object]';
   }
 
-  function isPlainObject(o) {
+  function _isPlainObject(o) {
     var ctor, prot;
 
-    if (isObjectObject(o) === false) return false;
+    if (_isObjectObject(o) === false) return false;
 
     // If has modified constructor
     ctor = o.constructor;
@@ -76,40 +80,39 @@
 
     // If has modified prototype
     prot = ctor.prototype;
-    if (isObjectObject(prot) === false) return false;
+    if (_isObjectObject(prot) === false) return false;
 
     // If constructor does not have an Object-specific method
     if (prot.hasOwnProperty('isPrototypeOf') === false) return false;
 
     // Most likely a plain Object
     return true;
-  }
 
-  function isPropsArgument(x) {
-    return isPlainObject(x)
-  }
+  // END
 
-  function transformRecursive(form) {
-    if (isElementForm(form)) {
+  function _isPropsArgument(x) {return _isPlainObject(x)}
+
+  function _transformRecursive(form) {
+    if (_isElementForm(form)) {
       var children = [],
         props = {};
 
       if (form.length > 1) {
-        var childrenStarts = null;
+        var childrenStartsAt = null;
 
-        if (isPropsArgument(form[1])) {
+        if (_isPropsArgument(form[1])) {
           // Format: ['selector', {}, ['child1'], ...]
           Object.assign(props, form[1])
-          childrenStarts = 2;
+          childrenStartsAt = 2;
         }
         else {
           // Format: ['selector', ['child1'], ...]
-          childrenStarts = 1;
+          childrenStartsAt = 1;
         }
 
         // Recursively transformm children
-        for (var i = childrenStarts; i < form.length; i++) {
-          children.push(transformRecursive(form[i]));
+        for (var i = childrenStartsAt; i < form.length; i++) {
+          children.push(_transformRecursive(form[i]));
         }
       }
 
@@ -134,7 +137,7 @@
       var componentOrTag = null;
 
       if (typeof form[0] === 'string') {
-        var parsed = parseTag(form[0], props);
+        var parsed = _parseTag(form[0], props);
         componentOrTag = parsed.tag;
 
         if (parsed.id) {
@@ -147,11 +150,11 @@
       else {
         componentOrTag = form[0];
       }
-      return React.createElement.apply(React, [componentOrTag, props].concat(
-        children));
+      var args = [componentOrTag, props].concat(children);
+      return React.createElement.apply(React, args);
     }
     else if (Array.isArray(form)) {
-      return form.map(transformRecursive);
+      return form.map(_transformRecursive);
     }
     else {
       return form
@@ -161,18 +164,20 @@
   /*
    * API
    */
+  function transform(form) {
+    return _transformRecursive(form);
+  }
+
   function wrapFunction(renderFn) {
-    var wrapper = function() {
-      var data = renderFn.apply(this, arguments);
-      var elems = transformRecursive(data);
-      return elems;
+    return function() {
+      return transform(renderFn.apply(this, arguments));
     };
-    return wrapper;
   }
 
   function createClass(classSpec) {
-    classSpec.render = wrapFunction(classSpec.render);
-    return React.createClass(classSpec);
+    var newClassSpec = Object.assign({}, classSpec);
+    newClassSpec.render = wrapFunction(classSpec.render);
+    return React.createClass(newClassSpec);
   }
 
   /*
@@ -181,7 +186,7 @@
   var namespace = {
     createClass: createClass,
     wrapFunction: wrapFunction,
-    transform: transformRecursive
+    transform: transform
   };
 
   if (typeof module !== 'undefined' && module.exports) {
