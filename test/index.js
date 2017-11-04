@@ -47,17 +47,17 @@ var renderTests = {
     html: '<h1>0</h1>'
   },
   'tag with children array as third argument': {
-    dom: ['h1', null, [
+    dom: ['h1', null,
       ['span'],
       ['span']
-    ]],
+    ],
     html: '<h1><span></span><span></span></h1>'
   },
   'tag with children array as second argument': {
-    dom: ['h1', [
+    dom: ['h1',
       ['span'],
       ['span']
-    ]],
+    ],
     html: '<h1><span></span><span></span></h1>'
   },
   'tag with nested dataset': {
@@ -73,23 +73,23 @@ var renderTests = {
     html: '<div><h1></h1></div>'
   },
   'component with props and children': {
-    dom: [Component, {title: 'Hello World!'}, [
+    dom: [Component, {title: 'Hello World!'},
       ['span', 'A child']
-    ]],
+    ],
     html: '<div><h1>Hello World!</h1><span>A child</span></div>'
   },
   'component with children': {
-    dom: [Component, [
+    dom: [Component,
       ['span', 'A child']
-    ]],
+    ],
     html: '<div><h1></h1><span>A child</span></div>'
   },
   'component with children in props': {
-    dom: [Component, {children: [['span', 'A child']]}],
+    dom: [Component, {children: ['span', 'A child']}],
     html: '<div><h1></h1><span>A child</span></div>'
   },
   'function component with children': {
-    dom: [FunctionComponent, [['span', 'A child']]],
+    dom: [FunctionComponent, ['span', 'A child']],
     html: '<div class="a-class"><span>A child</span></div>'
   }
 };
