@@ -87,7 +87,7 @@
 
     // Most likely a plain Object
     return true;
-
+  }
   // END
 
   function _isPropsArgument(x) {return _isPlainObject(x)}
