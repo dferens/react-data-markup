@@ -33,7 +33,7 @@
                     idName = part.substring(1, part.length);
                 }
             }
-        };
+        }
 
         if (classes.length) {
             if (props.className) {
@@ -50,7 +50,7 @@
 
     function isObject(val) {
         return val != null && typeof val === 'object' && Array.isArray(val) === false;
-    };
+    }
 
     function isObjectObject(o) {
         return isObject(o) === true
@@ -99,16 +99,33 @@
                 }
 
                 // Recursively transformm children
-                for (var i = childrenStarts; i < form.length; i++) {                    
+                for (var i = childrenStarts; i < form.length; i++) {
                     children.push(transformRecursive(form[i]));
                 }
+            }
+
+            // Supported nested dataset attributes
+            if (props.dataset) {
+                Object.keys(props.dataset).forEach(function unnest(attrName) {
+                    var dashedAttr = attrName.replace(/([a-z])([A-Z])/, function dash(match) {
+                        return match[0] + '-' + match[1].toLowerCase();
+                    });
+                    props['data-' + dashedAttr] = props.dataset[attrName];
+                });
+            }
+
+            // Support nested attributes
+            if (props.attributes) {
+                Object.keys(props.attributes).forEach(function unnest(attrName) {
+                    props[attrName] = props.attributes[attrName];
+                });
             }
 
             var componentOrTag = null;
 
             if (typeof form[0] === 'string') {
-                var parsed = parseTag(form[0], props),
-                    componentOrTag = parsed.tag;
+                var parsed = parseTag(form[0], props);
+                componentOrTag = parsed.tag;
 
                 if (parsed.id) {
                     props.id = parsed.id;
@@ -130,7 +147,7 @@
     /*
      * API
      */
-    function wrapRender(renderFn) {
+    function wrapFunction(renderFn) {
         var wrapper = function() {
             var data = renderFn.apply(this, arguments);
             var elems = transformRecursive(data);
@@ -140,7 +157,7 @@
     }
 
     function createClass(classSpec) {
-        classSpec.render = wrapRender(classSpec.render);;
+        classSpec.render = wrapFunction(classSpec.render);
         return React.createClass(classSpec);
     }
 
@@ -149,7 +166,8 @@
      */
     var namespace = {
         createClass: createClass,
-        wrapRender: wrapRender
+        wrapFunction: wrapFunction,
+        transform: transformRecursive
     };
 
     if (typeof module !== 'undefined' && module.exports) {
@@ -159,52 +177,3 @@
         window.DataMarkup = namespace;
     }
 })();
-
-//
-// function h(componentOrTag, properties, children) {
-//   // If a child array or text node are passed as the second argument, shift them
-//   if (!children && isChildren(properties)) {
-//     children = properties;
-//     properties = {};
-//   } else if (arguments.length === 2) {
-//     // If no children were passed, we don't want to pass "undefined"
-//     // and potentially overwrite the `children` prop
-//     children = [];
-//   }
-//
-//   properties = properties ? Object.assign({}, properties) : {};
-//
-//   // Supported nested dataset attributes
-//   if (properties.dataset) {
-//     Object.keys(properties.dataset).forEach(function unnest(attrName) {
-//       var dashedAttr = attrName.replace(/([a-z])([A-Z])/, function dash(match) {
-//         return match[0] + '-' + match[1].toLowerCase();
-//       });
-//       properties['data-' + dashedAttr] = properties.dataset[attrName];
-//     });
-//   }
-//
-//   // Support nested attributes
-//   if (properties.attributes) {
-//     Object.keys(properties.attributes).forEach(function unnest(attrName) {
-//       properties[attrName] = properties.attributes[attrName];
-//     });
-//   }
-//
-//   // When a selector, parse the tag name and fill out the properties object
-//   if (typeof componentOrTag === 'string') {
-//     componentOrTag = parseTag(componentOrTag, properties);
-//   }
-//
-//   // Create the element
-//   var args = [componentOrTag, properties].concat(children);
-//   return React.createElement.apply(React, args);
-// }
-//
-// function isChildren(x) {
-//   return typeof x === 'string' || typeof x === 'number' || Array.isArray(x);
-// }
-//
-
-// }
-// })();
