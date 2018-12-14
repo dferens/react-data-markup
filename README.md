@@ -1,4 +1,4 @@
-# react-data-markup [![Build Status](https://travis-ci.org/dferens/react-data-markup.svg?branch=master)](https://travis-ci.org/dferens/react-data-markup)
+# react-data-markup [![Build Status](https://travis-ci.org/dferens/react-data-markup.svg?branch=master)](https://travis-ci.org/dferens/react-data-markup) ![npm version](https://img.shields.io/npm/v/react-data-markup.svg)
 
 Write React.js markup with arrays & objects, inspired by [react-hyperscript](https://github.com/mlmorg/react-hyperscript) and [rum](https://github.com/tonsky/rum).
 
