@@ -102,7 +102,7 @@
 
         if (_isPropsArgument(form[1])) {
           // Format: ['selector', {}, ['child1'], ...]
-          Object.assign(props, form[1])
+          Object.assign(props, form[1]);
           childrenStartsAt = 2;
         }
         else {
@@ -125,6 +125,7 @@
             });
           props['data-' + dashedAttr] = props.dataset[attrName];
         });
+        props.dataset = undefined;
       }
 
       // Support nested attributes
@@ -132,6 +133,7 @@
         Object.keys(props.attributes).forEach(function unnest(attrName) {
           props[attrName] = props.attributes[attrName];
         });
+        props.attributes = undefined;
       }
 
       var componentOrTag = null;
