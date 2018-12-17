@@ -1,7 +1,7 @@
 {
   "name": "react-data-markup",
   "description": "Data syntax for React.js markup",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "homepage": "https://github.com/dferens/react-data-markup",
   "keywords": [
     "react",

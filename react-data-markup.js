@@ -125,7 +125,7 @@
             });
           props['data-' + dashedAttr] = props.dataset[attrName];
         });
-        props.dataset = undefined;
+        delete props.dataset;
       }
 
       // Support nested attributes
@@ -133,7 +133,7 @@
         Object.keys(props.attributes).forEach(function unnest(attrName) {
           props[attrName] = props.attributes[attrName];
         });
-        props.attributes = undefined;
+        delete props.attributes;
       }
 
       var componentOrTag = null;
