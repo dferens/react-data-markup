@@ -1,15 +1,9 @@
 'use strict';
-(function() {
-  // Load React
-  var React = null;
-  var isNode = new Function("try {return this===global;}catch(e){return false;}")();
-  if (isNode) {
-    React = require('react');
-  }
-  else {
-    React = window.React;
-  }
 
+var React = require('react');
+var createReactClass = require('create-react-class');
+
+(function() {
   function _parseTag(tag, props) {
     var noId = !('id' in props),
       tagParts = tag.split(/([\.#]?[a-zA-Z0-9_:-]+)/),
@@ -179,7 +173,7 @@
   function createClass(classSpec) {
     var newClassSpec = Object.assign({}, classSpec);
     newClassSpec.render = wrapFunction(classSpec.render);
-    return React.createClass(newClassSpec);
+    return createReactClass(newClassSpec);
   }
 
   /*

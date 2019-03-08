@@ -1,6 +1,6 @@
 'use strict';
 var console = require('console');
-// var React = require('react');
+var React = require('react');
 var ReactDOM = require('react-dom/server');
 var test = require('tape');
 
