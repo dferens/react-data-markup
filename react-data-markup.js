@@ -1,13 +1,16 @@
 'use strict';
 (function() {
-  // Load React
-  var React = null;
+  var React = null,
+      createReactClass = null;
+
   var isNode = new Function("try {return this===global;}catch(e){return false;}")();
   if (isNode) {
     React = require('react');
+    createReactClass = require('create-react-class');
   }
   else {
     React = window.React;
+    createReactClass = window.createReactClass;
   }
 
   function _parseTag(tag, props) {
@@ -153,7 +156,7 @@
         componentOrTag = form[0];
       }
       var args = [componentOrTag, props].concat(children);
-      return React.createElement.apply(React, args);
+      return React.createElement.apply(createReactClass, args);
     }
     else if (Array.isArray(form)) {
       return form.map(_transformRecursive);
@@ -179,7 +182,7 @@
   function createClass(classSpec) {
     var newClassSpec = Object.assign({}, classSpec);
     newClassSpec.render = wrapFunction(classSpec.render);
-    return React.createClass(newClassSpec);
+    return createReactClass(newClassSpec);
   }
 
   /*
