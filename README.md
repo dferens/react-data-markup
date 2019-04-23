@@ -2,6 +2,15 @@
 
 Write React.js markup with arrays & objects, inspired by [react-hyperscript](https://github.com/mlmorg/react-hyperscript) and [rum](https://github.com/tonsky/rum).
 
+## Installing
+- v1 - include via <script> tag, access `window.DataMarkup`
+  - v1.0.x - React v15
+  - v1.1.x - React v16 (requires [create-react-class](https://www.npmjs.com/package/create-react-class))
+- v2 - webpack & require
+  - v2.0.x - React v15
+  - TODO: v2.1.x - React v16
+
+
 ## Importing
 
 ```es6
