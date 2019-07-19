@@ -56,7 +56,7 @@
 
   function _isElementForm(x) {
     return Array.isArray(x) && (typeof x[0] == 'string' || typeof x[0] ==
-      'function')
+      'function' || x[0] === React.Fragment)
   }
 
   // Code is taken from: https://github.com/jonschlinkert/is-plain-object

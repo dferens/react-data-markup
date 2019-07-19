@@ -1,6 +1,6 @@
 'use strict';
 var console = require('console');
-// var React = require('react');
+var React = require('react');
 var ReactDOM = require('react-dom/server');
 var test = require('tape');
 
@@ -91,6 +91,10 @@ var renderTests = {
   'function component with children': {
     dom: [FunctionComponent, ['span', 'A child']],
     html: '<div class="a-class"><span>A child</span></div>'
+  },
+  'fragment component': {
+    dom: [FunctionComponent, [React.Fragment, ['span', 'A'], ['span', 'B']]],
+    html: '<div class="a-class"><span>A</span><span>B</span></div>'
   }
 };
 
@@ -141,14 +145,16 @@ function catchWarns(fn) {
 
   /* eslint-disable no-console */
   var originalWarn = console.warn;
-  console.warn = warn;
+  var originalError = console.error;
+  console.warn = console.error = logMessage;
   fn();
   console.warn = originalWarn;
+  console.error = originalError;
   /* esline-enable no-console */
 
   return messages;
 
-  function warn(message) {
+  function logMessage(message) {
     messages.push(message);
   }
 }
