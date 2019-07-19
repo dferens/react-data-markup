@@ -15,7 +15,7 @@
 
   function _parseTag(tag, props) {
     var noId = !('id' in props),
-      tagParts = tag.split(/([\.#]?[a-zA-Z0-9_:-]+)/),
+      tagParts = tag.split(/([.#]?[a-zA-Z0-9_:-]+)/),
       tagName = null,
       idName = null;
 
@@ -86,7 +86,9 @@
     if (_isObjectObject(prot) === false) return false;
 
     // If constructor does not have an Object-specific method
+    /*eslint-disable no-prototype-builtins */
     if (prot.hasOwnProperty('isPrototypeOf') === false) return false;
+    /*eslint-enable no-prototype-builtins */
 
     // Most likely a plain Object
     return true;

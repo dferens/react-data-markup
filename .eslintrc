@@ -1,3 +1,7 @@
 {
-  "extends": ["eslint-config-mlmorg"]
+  "extends": ["eslint:recommended"],
+  "globals": {
+    "require": false,
+    "module": false
+  }
 }
